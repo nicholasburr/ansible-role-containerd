@@ -20,7 +20,7 @@
   sysctl:
     name: "{{ item }}"
     value: '1'
-    state: present
+    state: present    
     reload: true
     sysctl_file: /etc/sysctl.d/99-kubernetes-cri.conf
   loop:
