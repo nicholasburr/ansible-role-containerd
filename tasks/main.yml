@@ -16,20 +16,17 @@
     - overlay
     - br_netfilter
 
-- name: create
-  blockinfile:
-    path: /etc/sysctl.d/99-kubernetes-cri.conf
-    create: true
-    backup: true
-    block: |
-          net.bridge.bridge-nf-call-iptables  = 1
-          net.ipv4.ip_forward                 = 1
-          net.bridge.bridge-nf-call-ip6tables = 1
-
-- name: reload sysctl
+- name: configure sysctl
   sysctl:
-    name: system
-    state: reloaded
+    name: "{{ item }}"
+    value: '1'
+    state: present
+    reload: true
+    file: /etc/sysctl.d/99-kubernetes-cri.conf
+  loop:
+    - net.bridge.bridge-nf-call-iptables
+    - net.ipv4.ip_forward
+    - net.bridge.bridge-nf-call-ip6tables
 
 - name: install containerd prerequisites
   apt:
