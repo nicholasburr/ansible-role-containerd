@@ -22,7 +22,7 @@
     value: '1'
     state: present
     reload: true
-    file: /etc/sysctl.d/99-kubernetes-cri.conf
+    sysctl_file: /etc/sysctl.d/99-kubernetes-cri.conf
   loop:
     - net.bridge.bridge-nf-call-iptables
     - net.ipv4.ip_forward
