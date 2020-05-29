@@ -71,3 +71,5 @@
   args:
     creates: /etc/containerd/config.toml
   notify: restart_containerd
+
+- meta: flush_handlers
