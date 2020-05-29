@@ -1,0 +1,73 @@
+---
+- name: create /etc/modules-load.d/containerd.conf
+  blockinfile:
+    path: /etc/modules-load.d/containerd.conf
+    create: true
+    backup: true
+    block: |
+          overlay
+          br_netfilter
+
+- name: enable modprobe modules
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - overlay
+    - br_netfilter
+
+- name: create
+  blockinfile:
+    path: /etc/sysctl.d/99-kubernetes-cri.conf
+    create: true
+    backup: true
+    block: |
+          net.bridge.bridge-nf-call-iptables  = 1
+          net.ipv4.ip_forward                 = 1
+          net.bridge.bridge-nf-call-ip6tables = 1
+
+- name: reload sysctl
+  sysctl:
+    name: system
+    state: reloaded
+
+- name: install containerd prerequisites
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates curl
+      - software-properties-common
+    state: present
+
+## Add Docker’s official GPG key
+- name: install docker apt-key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: add Docker repository
+  apt_repository:
+    repo: "deb [arch={{ ansible_architecture }}] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+
+- name: install containerd
+  apt:
+    name: containerd.io
+    state: present
+
+- name: configure containerd service
+  systemd:
+    name: containerd
+    state: started
+    enabled: true
+
+- name: create /etc/containerd
+  file:
+    path: /etc/containerd
+    state: directory
+
+- name: create containerd default config
+  command: containerd config default > /etc/containerd/config.toml
+    args:
+      creates: /etc/containerd/config.toml
+  notify: restart_containerd
