@@ -1,7 +1,7 @@
 galaxy_info:
-  role_name:
+  role_name: containerd
   author: Nicholas Burr
-  description:
+  description: Install and configure containerd
 
   license: MIT
 
@@ -9,9 +9,9 @@ galaxy_info:
 
 # https://galaxy.ansible.com/api/v1/platforms/
   platforms:
-  - name:
+  - name: Ubuntu
     versions:
-    -
+    - Focal
 
   galaxy_tags: []
 
