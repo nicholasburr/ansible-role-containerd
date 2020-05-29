@@ -68,6 +68,6 @@
 
 - name: create containerd default config
   command: containerd config default > /etc/containerd/config.toml
-    args:
-      creates: /etc/containerd/config.toml
+  args:
+    creates: /etc/containerd/config.toml
   notify: restart_containerd
